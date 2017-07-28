@@ -67,7 +67,13 @@ serialize = (object, classname, classdefs) ->
       when log is NaN then [1.5, 0x7ff]
       else [(float * Math.pow(2, -log)), log + 1023]
     mantissa_hi = ((mantissa_f - 1) * Math.pow(2, 20)) | 0
-    write_i32(0) # TODO fix this
+
+    # TODO This sort of works, at the cost of limiting precision; unfortunately,
+    # since JS lacks 64-bit ints, I'm not sure what to do about this. Just
+    # avoid encoding doubles in JSONC for the time being.
+    mantissa_lo = 0
+    
+    write_i32(mantissa_lo)
     write_i32(sign | (exponent << 20) | mantissa_hi)
 
   writeArray = (array, writer, maxlen) ->
