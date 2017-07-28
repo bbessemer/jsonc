@@ -22,10 +22,12 @@
 
 #include <stdio.h>
 
+#pragma pack(1)
 struct Bar {
   short thing[4];
 };
 
+#pragma pack(1)
 struct Foo {
   struct Bar bar;
   int baz;
