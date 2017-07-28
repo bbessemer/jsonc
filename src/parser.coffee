@@ -22,7 +22,7 @@
 
 parse = (bytes, classname, classdefs) ->
   i = 0
-  
+
   parse_i32 = ->
     bytes[i++] | bytes[i++] << 8 | bytes[i++] << 16 | bytes[i++] << 24
 
@@ -33,7 +33,7 @@ parse = (bytes, classname, classdefs) ->
 
   parse_f32 = ->
     integer = parse_i32()
-    sign = (integer & 0x80000000) >> 31
+    sign = if (integer & 0x80000000) then -1.0 else 1.0
     exponent = (integer & 0x7f800000) >>> 23
     mantissa = integer & 0x007fffff
     sign * (switch exponent
@@ -45,7 +45,7 @@ parse = (bytes, classname, classdefs) ->
   parse_f64 = ->
     int_lo = parse_i32()
     int_hi = parse_i32()
-    sign = (int_hi & 0x80000000) >> 31
+    sign = if (int_hi & 0x80000000) then -1.0 else 1.0
     exponent = (int_hi & 0x7ff00000) >>> 20
     mantissa = int_lo + (int_hi & 0x000fffff) * Math.pow(2, 32)
     sign * (switch exponent
