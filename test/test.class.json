@@ -1,0 +1,11 @@
+{
+  "Foo": {
+    "bar": "Bar",
+    "baz": "i32",
+    "yolo": "f32",
+    "swag": "char[16]",
+  },
+  "Bar" : {
+    "thing": "i16[4]"
+  }
+}
