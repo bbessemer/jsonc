@@ -65,7 +65,8 @@ serialize = (object, classname, classdefs) ->
     write_i32(0) # TODO fix this
     write_i32(sign | (exponent << 20) | mantissa_hi)
 
-  writeArray = (array, writer, maxlen) -> writer(array[i]) for i in [0..maxlen]
+  writeArray = (array, writer, maxlen) ->
+    writer(array[i] ? 0) for i in [0..maxlen]
 
   writeType = (item, type) ->
     [type, arraylen] = type.match(/\[([0-9]*)\]/) ? [type, 0]
