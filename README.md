@@ -101,5 +101,5 @@ parse: (bytes: Uint8Array, classname: string, classdefs: object) => object
 serialize: (obj: object, classname: string, classdefs: object) => Uint8Array
 ```
 
-`classname` represents the name of the class of which the object to be parsed
-or serialized is. See above for information on the structure of `classdefs`.
+`classname` represents the name of the class of the object to be parsed
+or serialized. See above for information on the structure of `classdefs`.
