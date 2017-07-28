@@ -47,20 +47,21 @@ serialize = (object, classname, classdefs) ->
       when log is NaN then [1, 255]
       else [(float * Math.pow(2, 23 - log)) | 0, log + 127]
     write_i32(sign | (exponent << 23) | mantissa)
-###
+
   write_f64 = (float) ->
     sign = if float < 0
       float *= -1
       -0x80000000|0
     else 0
     log = Math.floor(Math.log2(float))
-    [mantissa, exponent] = switch
+    [mantissa_f, exponent] = switch
       when log < -1022 then [(float * Math.pow(2, 1022)), 0]
       when log is Infinity then [1.0, 0x7ff]
       when log is NaN then [1.5, 0x7ff]
       else [(float * Math.pow(2, -log)), log + 1023]
-    write_i32(sign | (exponent << 23) | mantissa)
-###
+    mantissa_hi = ((mantissa_f - 1) * Math.pow(2, 20)) | 0
+    write_i32(0) # TODO fix this
+    write_i32(sign | (exponent << 20) | mantissa_hi)
 
   writeArray = (array, writer, maxlen) -> writer(array[i]) for i in [0..maxlen]
 
