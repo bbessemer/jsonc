@@ -20,6 +20,11 @@
 # IN THE SOFTWARE.
 ###
 
+###
+# @author Brent Bessemer
+# created 2017-07-28
+###
+
 JSONC =
   parse: require './parser'
   serialize: require './serializer'

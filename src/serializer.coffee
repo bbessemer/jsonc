@@ -20,6 +20,11 @@
 # IN THE SOFTWARE.
 ###
 
+###
+# @author Brent Bessemer
+# created 2017-07-28
+###
+
 utf8 = require './utf8'
 
 serialize = (object, classname, classdefs) ->
