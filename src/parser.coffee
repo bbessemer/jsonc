@@ -20,30 +20,58 @@
 # IN THE SOFTWARE.
 ###
 
-readInt = (bytes, i) ->
-  bytes[i] | bytes[i+1] << 8 | bytes[i+2] << 16 | bytes[i+3] << 24
-
-
 parse = (bytes, classname, classdefs) ->
-  parseElement = (i, type) ->
-    switch type
-      when 'int' then [readInt(bytes, i), i + 4]
-      when 'double' then [readDouble(bytes, i), i + 8]
-      when 'string' then readString(bytes, i)
-      else parseClass(i, classdefs[type])
+  parse_i32 = ->
+    bytes[i++] | bytes[i++] << 8 | bytes[i++] << 16 | bytes[i++] << 24
 
-  parseArray = (i, elemtype, length) ->
-    [(for j in [0..length]
-      [element, i] = parseElement(i, elemtype)
-      element), i]
+  parse_u16 = -> bytes[i++] | bytes[i++] << 8
+  parse_i16 = -> if (x = parse_i16()) > 0x7fff then x | 0xffff0000 else x
+  parse_u8 = -> bytes[i++]
+  parse_i8 = -> if (x = parse_i8()) > 0x7f then x | 0xffffff00 else x
 
-  parseClass = (i, thisclass) ->
-    for key, type in thisclass
-      [type, arraylen] = type.match(/(.*)\[([0-9]*)\]/) ? [type, '']
-      if arraylen is ''
-        [out[key], i] = parseElement(i, type)
-      else
-        [out[key], i] = parseArray(i, type, Number(arraylen))
+  parse_f32 = ->
+    integer = parse_i32()
+    sign = (integer & 0x80000000) >> 31
+    exponent = (integer & 0x7f800000) >>> 23
+    mantissa = integer & 0x007fffff
+    sign * (switch exponent
+      when 0 then Math.pow(2, -149) * mantissa
+      when 0xff
+        if mantissa is 0 then Infinity else NaN
+      else Math.pow(2, exponent - 150) * (mantissa | 0x00800000))
 
-  out = {}
-  parseClass(0, classdefs[classname])[0]
+  parse_f64 = ->
+    int_lo = parse_i32()
+    int_hi = parse_i32()
+    sign = (int_hi & 0x80000000) >> 31
+    exponent = (int_hi & 0x7ff00000) >>> 20
+    mantissa = int_lo + (int_hi & 0x000fffff) * Math.pow(2, 32)
+    sign * (switch exponent
+      when 0 then Math.pow(2, -1074) * mantissa
+      when 0x7ff
+        if mantissa is 0.0 then Infinity else NaN
+      else Math.pow(2, exponent - 1075) * (mantissa + Math.pow(2, 52)))
+
+  parseArray = (reader, length) -> reader() for j in [0..length]
+
+  parseType = (type) ->
+    [type, arraylen] = type.match(/\[([0-9]*)\]/) ? [type, 0]
+    reader = switch type
+      when 'i32', 'int' then parse_i32
+      when 'u16', 'unsigned short' then parse_u16
+      when 'i16', 'short' then parse_i16
+      when 'u8', 'char', 'unsigned char' then parse_u8
+      when 'i8', 'signed char' then parse_i8
+      when 'f32', 'float' then parse_f32
+      when 'f64', 'double' then parse_f64
+      else (() -> parseClass classdefs[type])
+    if (arraylen) then parseArray(reader, arraylen) else reader()
+
+  parseClass = (classdef) ->
+    obj = {}
+    obj[key] = parseType(type) for key, type of classdef
+    return obj
+
+  return parseType(classname)
+
+module.exports = parse
