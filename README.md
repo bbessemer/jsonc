@@ -1,6 +1,6 @@
 # JSONC
 
-`jsonc` stands for either 'JSON with classes' or 'JSON compiler' depending on
+`jsonc` stands for either ‘JSON with classes’ or ‘JSON compiler’ depending on
 your mood, and it functions as both: a binary format for JSON objects based on
 external class definitions (which are themselves JavaScript objects), and a
 compiler and parser to serialize and deserialize objects to and from this
