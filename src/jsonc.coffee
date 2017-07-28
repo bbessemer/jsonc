@@ -21,8 +21,8 @@
 ###
 
 JSONC =
-  parse: require 'parser'
-  serialize: require 'serializer'
+  parse: require './parser'
+  serialize: require './serializer'
 
 if typeof(module?.exports) is 'object'
   module.exports = JSONC
