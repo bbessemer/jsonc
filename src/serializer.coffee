@@ -68,18 +68,24 @@ serialize = (object, classname, classdefs) ->
   writeArray = (array, writer, maxlen) ->
     writer(array[i] ? 0) for i in [0..maxlen]
 
+  writeString = (string, maxlen) ->
+    writeArray(utf8.encode(string), write_i8, maxlen)
+
   writeType = (item, type) ->
-    [type, arraylen] = type.match(/\[([0-9]*)\]/) ? [type, 0]
-    writer = switch type
-      when 'i32', 'int' then write_i32
-      when 'u16', 'unsigned short' then write_i16
-      when 'i16', 'short' then write_i16
-      when 'u8', 'char', 'unsigned char' then write_i8
-      when 'i8', 'signed char' then write_i8
-      when 'f32', 'float' then write_f32
-      when 'f64', 'double' then write_f64
-      else ((item) -> writeClass(item, classdefs[type]))
-    if (arraylen) then writeArray(item, writer, arraylen) else writer(item)
+    [type, arraylen] = type.match(/(.*)\[([0-9]*)\]/) ? [type, null]
+    if type is 'char'
+      writeString(arraylen || 1)
+    else
+      writer = switch type
+        when 'i32', 'int' then write_i32
+        when 'u16', 'unsigned short' then write_i16
+        when 'i16', 'short' then write_i16
+        when 'u8', 'char', 'unsigned char' then write_i8
+        when 'i8', 'signed char' then write_i8
+        when 'f32', 'float' then write_f32
+        when 'f64', 'double' then write_f64
+        else ((item) -> writeClass(item, classdefs[type]))
+      if (arraylen) then writeArray(item, writer, arraylen) else writer(item)
 
   writeClass = (item, classdef) ->
     writeType(item[key], type) for key, type of classdef

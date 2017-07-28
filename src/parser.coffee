@@ -58,18 +58,24 @@ parse = (bytes, classname, classdefs) ->
 
   parseArray = (reader, length) -> reader() for j in [0..length]
 
+  parseString = (length) -> utf8.decode(parseArray(parse_u8, length))
+
   parseType = (type) ->
-    [type, arraylen] = type.match(/\[([0-9]*)\]/) ? [type, 0]
-    reader = switch type
-      when 'i32', 'int' then parse_i32
-      when 'u16', 'unsigned short' then parse_u16
-      when 'i16', 'short' then parse_i16
-      when 'u8', 'char', 'unsigned char' then parse_u8
-      when 'i8', 'signed char' then parse_i8
-      when 'f32', 'float' then parse_f32
-      when 'f64', 'double' then parse_f64
-      else (() -> parseClass classdefs[type])
-    if (arraylen) then parseArray(reader, arraylen) else reader()
+    [type, arraylen] = type.match(/(.*)\[([0-9]*)\]/) ? [type, null]
+    arraylen = parse_i32() if arraylen is ''
+    if type is 'char'
+      parseString(arraylen ? 1)
+    else
+      reader = switch type
+        when 'i32', 'int' then parse_i32
+        when 'u16', 'unsigned short' then parse_u16
+        when 'i16', 'short' then parse_i16
+        when 'u8', 'unsigned byte' then parse_u8
+        when 'i8', 'byte' then parse_i8
+        when 'f32', 'float' then parse_f32
+        when 'f64', 'double' then parse_f64
+        else (() -> parseClass classdefs[type])
+      if (arraylen) then parseArray(reader, arraylen) else reader()
 
   parseClass = (classdef) ->
     obj = {}
