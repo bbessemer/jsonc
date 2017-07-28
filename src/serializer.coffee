@@ -85,8 +85,8 @@ serialize = (object, classname, classdefs) ->
         when 'i32', 'int' then write_i32
         when 'u16', 'unsigned short' then write_i16
         when 'i16', 'short' then write_i16
-        when 'u8', 'char', 'unsigned char' then write_i8
-        when 'i8', 'signed char' then write_i8
+        when 'u8', 'unsigned byte' then write_i8
+        when 'i8', 'byte' then write_i8
         when 'f32', 'float' then write_f32
         when 'f64', 'double' then write_f64
         else ((item) -> writeClass(item, classdefs[type]))
