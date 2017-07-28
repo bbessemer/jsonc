@@ -103,3 +103,20 @@ serialize: (obj: object, classname: string, classdefs: object) => Uint8Array
 
 `classname` represents the name of the class of which the object to be parsed
 or serialized is. See above for information on the structure of `classdefs`.
+
+## Building instructions
+
+You will need [CoffeeScript](http://coffeescript.org),
+[Browserify](http://browserify.org/), and [UglifyJS](https://github.com/mishoo/UglifyJS).
+Assuming you already have Node and NPM installed, that's as simple as
+
+```
+npm install -g coffee-script browserify uglifyjs
+```
+
+Then, just run `make` to build `jsonc-browser.min.js` in the root directory of
+the repository.
+
+If you don't have Node and make (if, for example, you're on Windows), there are
+far better tutorials available on how to install them than I can provide in this
+README. I suggest you start [here](https://nodejs.org).
