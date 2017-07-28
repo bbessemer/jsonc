@@ -2,6 +2,32 @@
 <html>
 <head>
   <script type="text/javascript" src="../src/bundle.js"></script>
+  <script>
+    var classdefs = {
+      Foo: {
+        bar: "Bar",
+        baz: "i32",
+        yolo: "f32",
+        swag: "char[16]",
+      },
+      Bar : {
+        thing: "i16[4]"
+      }
+    };
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', () => {
+      var bytes = new Uint8Array(xhr.response);
+      console.log(bytes)
+      var start = performance.now();
+      var obj = JSONC.parse(bytes, 'Foo', classdefs);
+      var time = performance.now() - start;
+      console.log(obj);
+      console.log("Took %f ms", time);
+    })
+    xhr.responseType = 'arraybuffer';
+    xhr.open('GET', 'test.jsonc');
+    xhr.send();
+  </script>
 </head>
 <body>
   <p>Open your JavaScript console to test JSONC.</p>
