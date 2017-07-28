@@ -4,9 +4,9 @@ MIN = uglifyjs -cm
 
 JSFILES = src/jsonc.js src/parser.js src/serializer.js
 
-all: jsonc.min.js
+all: jsonc-browser.min.js
 
-jsonc.min.js: src/bundle.js
+jsonc-browser.min.js: src/bundle.js
 	$(MIN) -o $@ $^
 
 src/bundle.js: $(JSFILES)
@@ -16,4 +16,4 @@ src/bundle.js: $(JSFILES)
 	$(CFC) -p $< > $@
 
 clean:
-	rm -f $(JSFILES) src/bundle.js jsonc.min.js
+	rm -f $(JSFILES) src/bundle.js jsonc-browser.min.js
