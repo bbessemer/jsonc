@@ -22,11 +22,24 @@
       var obj = JSONC.parse(bytes, 'Foo', classdefs);
       var time = performance.now() - start;
       console.log(obj);
-      console.log("Took %f ms", time);
+      console.log("Binary parsing took %f ms", time);
     })
     xhr.responseType = 'arraybuffer';
     xhr.open('GET', 'test.jsonc');
     xhr.send();
+
+    var xhr2 = new XMLHttpRequest();
+    xhr2.addEventListener('load', () => {
+      var text = xhr2.responseText
+      console.log(text)
+      var start = performance.now()
+      var obj = JSON.parse(text)
+      var time = performance.now() - start;
+      console.log(obj)
+      console.log("Text parsing took %f ms", time)
+    })
+    xhr2.open('GET', 'test.json')
+    xhr2.send()
   </script>
 </head>
 <body>

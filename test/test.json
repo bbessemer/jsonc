@@ -1,0 +1,8 @@
+{
+  "bar": {
+    "thing": [1, 3, 3, 7]
+  },
+  "baz": 420,
+  "yolo": 69.0,
+  "swag": "hello, world"
+}
