@@ -21,6 +21,8 @@
 ###
 
 parse = (bytes, classname, classdefs) ->
+  i = 0
+  
   parse_i32 = ->
     bytes[i++] | bytes[i++] << 8 | bytes[i++] << 16 | bytes[i++] << 24
 
