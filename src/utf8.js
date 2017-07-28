@@ -2,6 +2,12 @@
  * Public domain.
  */
 
+/**
+ * @file utf8.js
+ * @author Brent Bessemer
+ * created July 2017
+ */
+
 (function () {
 
 function utf8encode (string) {
