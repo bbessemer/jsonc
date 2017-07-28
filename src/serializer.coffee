@@ -83,3 +83,5 @@ serialize = (object, classname, classdefs) ->
 
   writeType(object, classname)
   return new Uint8Array(bytes)
+
+module.exports = serialize
