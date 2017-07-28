@@ -20,6 +20,8 @@
 # IN THE SOFTWARE.
 ###
 
+utf8 = require './utf8'
+
 serialize = (object, classname, classdefs) ->
   bytes = []
 
