@@ -34,9 +34,9 @@ parse = (bytes, classname, classdefs) ->
     bytes[i++] | bytes[i++] << 8 | bytes[i++] << 16 | bytes[i++] << 24
 
   parse_u16 = -> bytes[i++] | bytes[i++] << 8
-  parse_i16 = -> if (x = parse_i16()) > 0x7fff then x | 0xffff0000 else x
+  parse_i16 = -> if (x = parse_u16()) > 0x7fff then x | 0xffff0000 else x
   parse_u8 = -> bytes[i++]
-  parse_i8 = -> if (x = parse_i8()) > 0x7f then x | 0xffffff00 else x
+  parse_i8 = -> if (x = parse_u8()) > 0x7f then x | 0xffffff00 else x
 
   parse_f32 = ->
     integer = parse_i32()
@@ -61,12 +61,12 @@ parse = (bytes, classname, classdefs) ->
         if mantissa is 0.0 then Infinity else NaN
       else Math.pow(2, exponent - 1075) * (mantissa + Math.pow(2, 52)))
 
-  parseArray = (reader, length) -> reader() for j in [0..length]
+  parseArray = (reader, length) -> reader() for j in [0...length]
 
   parseString = (length) -> utf8.decode(parseArray(parse_u8, length))
 
   parseType = (type) ->
-    [type, arraylen] = type.match(/(.*)\[([0-9]*)\]/) ? [type, null]
+    [type, arraylen] = type.match(/([^\[]*)\[([0-9]*)\]/)?.slice(1) ? [type, null]
     arraylen = parse_i32() if arraylen is ''
     if type is 'char'
       parseString(arraylen ? 1)
@@ -80,7 +80,7 @@ parse = (bytes, classname, classdefs) ->
         when 'f32', 'float' then parse_f32
         when 'f64', 'double' then parse_f64
         else (() -> parseClass classdefs[type])
-      if (arraylen) then parseArray(reader, arraylen) else reader()
+      if arraylen? then parseArray(reader, arraylen) else reader()
 
   parseClass = (classdef) ->
     obj = {}

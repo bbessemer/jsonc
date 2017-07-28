@@ -71,13 +71,13 @@ serialize = (object, classname, classdefs) ->
     write_i32(sign | (exponent << 20) | mantissa_hi)
 
   writeArray = (array, writer, maxlen) ->
-    writer(array[i] ? 0) for i in [0..maxlen]
+    writer(array[i] ? 0) for i in [0...maxlen]
 
   writeString = (string, maxlen) ->
     writeArray(utf8.encode(string), write_i8, maxlen)
 
   writeType = (item, type) ->
-    [type, arraylen] = type.match(/(.*)\[([0-9]*)\]/) ? [type, null]
+    [type, arraylen] = type.match(/([^\[]*)\[([0-9]*)\]/)?.slice(1) ? [type, null]
     if type is 'char'
       writeString(arraylen || 1)
     else
